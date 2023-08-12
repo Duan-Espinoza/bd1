@@ -3,27 +3,21 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package tec.bd.weather;
-
 import picocli.CommandLine;
 
-@CommandLine.Command(
-        name= "Weather App",
-        subcommands={
-            WeatherByCityCommand.class,
-            WeatherByZipCodeCommand.class,
-            CommandLine.HelpCommand.class
-        },
-        description= "Weather App Service by City and Zip Code")
-
+@CommandLine.Command(name="by-zip", description="Get weather for a Zip code")
 /**
  *
  * @author Duan Espinoza
  */
-public class MainCommand implements Runnable {
+public class WeatherByZipCodeCommand implements Runnable {
+    @CommandLine.Parameters(paramLabel="<zip code>", description=" The Zip code")
+    private String zipCode;
+    
     
     @Override
     public void run(){
-        
+        System.out.println("By Zip Code: "+zipCode);
     }
     
 }
