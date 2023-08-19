@@ -1,47 +1,72 @@
 package tec.bd.weather.service;
 
-import tec.bd.weather.model.Report;
-import tec.bd.weather.storage.WeatherReportStorage;
-
-import java.util.Date;
+import tec.bd.weather.entity.Forecast;
+import tec.bd.weather.repository.Repository;
 
 public class WeatherServiceImpl implements WeatherService {
 
-    private final WeatherService remoteWeatherProvider;
+    private Repository<Forecast, Integer> weatherRepository;
 
-    private final WeatherReportStorage weatherReportStorage;
+    public WeatherServiceImpl(Repository<Forecast, Integer> weatherRepository) {
+        this.weatherRepository = weatherRepository;
+    }
 
-    public WeatherServiceImpl(WeatherService remoteWeatherProvider,
-                              WeatherReportStorage weatherReportStorage) {
+    
+    @Override
+    public float getCityTemperature(String city) {
+        var weather = this.weatherRepository
+                .findAll()
+                .stream()
+                .filter(e -> e.getCityName().equals(city))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException(city + " is not supported"));
 
-        this.remoteWeatherProvider = remoteWeatherProvider;
-        this.weatherReportStorage = weatherReportStorage;
+        return weather.getTemperature();
     }
 
     @Override
-    public Report getByZipCode(String zipCode) {
+    public float getZipCodeTemperature(String zipCode) {
+        var weather = this.weatherRepository
+                .findAll()
+                .stream()
+                .filter(e -> e.getZipCode().equals(zipCode))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException(zipCode + " is not supported"));
 
-        // 1. Solicitar el dato a el almacenamiento local. Se envia el zipCode y
-        // el almacenamiento deberá de resolver si hay datos
-        var now = new Date(System.currentTimeMillis()).toString();
-        var report = this.weatherReportStorage.find(zipCode);
+        return weather.getTemperature();
+    }
 
-        if (report != null) {
-            return report;
+    public void newForecast(Forecast newForecast) {
+        Forecast.validate(newForecast);
+        var current = this.weatherRepository.findById(newForecast.getId());
+        if (current.isPresent()) {
+            throw new RuntimeException("Weather forecast ID already exists in database");
         }
 
-        // 2. Solicitar el reporte del clima de forma remota
-        var weatheProviderReport = this.remoteWeatherProvider.getByZipCode(zipCode);
-
-        // 3. Guardar el reporte obtenido de forma remota localmente
-        weatherReportStorage.save(weatheProviderReport);
-
-        return weatheProviderReport;
+        this.weatherRepository.save(newForecast);
     }
 
     @Override
-    public Report getByCity(String city) {
-        return null;
+    public Forecast updateForecast(Forecast forecast) {
+        Forecast.validate(forecast);
+        var current = this.weatherRepository.findById(forecast.getId());
+        if (current.isEmpty()) {
+            throw new RuntimeException("Weather forecast ID doesn't exists in database");
+        }
+        return this.weatherRepository.update(forecast);
     }
 
+    public void removeForecast(Forecast forecastId, Forecast forecast) {
+      Forecast.validate(forecast);
+        var current = this.weatherRepository.findById(forecast.getId());
+        if (current.isEmpty()) {
+            throw new RuntimeException("Weather forecast ID is already remove in database");
+        }
+        this.weatherRepository.remove(forecast);
+    }
+
+    @Override
+    public void removeForecast(Forecast forecastId) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

@@ -1,10 +1,16 @@
 package tec.bd.weather.service;
 
-import tec.bd.weather.model.Report;
+import tec.bd.weather.entity.Forecast;
 
 public interface WeatherService {
 
-    Report getByZipCode(String zipCode);
+    float getCityTemperature(String city);
+    float getZipCodeTemperature(String zipCode);
 
-    Report getByCity(String city);
+    void newForecast(Forecast weather);
+
+    Forecast updateForecast(Forecast weather);
+
+    void removeForecast(Forecast forecastId);
+
 }
