@@ -4,51 +4,49 @@ import tec.bd.weather.entity.Forecast;
 
 import java.util.*;
 
-public class InMemoryForecastRepository implements Repository<Forecast, Integer> {
+public class InMemoryForecastRepository implements  Repository<Forecast, Integer> {
 
-    private Set<Forecast> inMemoryForecasData;
-    private Object inMemoryForecastData;
+    private Set<Forecast> inMemoryForecastData;
 
-    public InMemoryForecastRepository() {
-        // "inicializando" la base de datos
-        this.inMemoryForecasData = new HashSet<>();
-        this.inMemoryForecasData.add(new Forecast(1, "Costa Rica", "Alajuela", "10101", 23.0f));
-        this.inMemoryForecasData.add(new Forecast(2, "Costa Rica", "Cartago", "20201", 24.0f));
-        this.inMemoryForecasData.add(new Forecast(3, "Costa Rica", "San Jose", "30301", 25.0f));
-        this.inMemoryForecasData.add(new Forecast(4, "Costa Rica", "Limon", "40401", 25.0f));
+    public InMemoryForecastRepository(){
+        //Se inician los datos
+        //Se modifican los datos a agregar con la adicion forecastDate
+        this.inMemoryForecastData = new HashSet<>();
+        this.inMemoryForecastData.add(new Forecast(1, "Costa Rica", "Alajuela", "10101", new Date(), 23.0f));
+        this.inMemoryForecastData.add(new Forecast(2, "Costa Rica", "Cartago", "20201", new Date(), 24.0f));
+        this.inMemoryForecastData.add(new Forecast(3, "Costa Rica", "San Jose", "30301", new Date(), 25.0f));
+        this.inMemoryForecastData.add(new Forecast(4, "Costa Rica", "Limon", "40401", new Date(), 25.0f));
+       // this.inMemoryForecastData.add(new Forecast(5, "Limon", "Costa Rica", "33122", new Date(),  23.0f));
     }
 
     @Override
-    public Optional<Forecast> findById(Integer id) {
-        return this.inMemoryForecasData
+    public Optional <Forecast> findById(Integer id) {
+        return this.inMemoryForecastData
                 .stream()
-                .filter(e -> Objects.equals(e.getId(), id))
+                .filter(e -> Objects.equals(e.getId(),id))
                 .findFirst();
     }
 
     @Override
     public List<Forecast> findAll() {
-        return new ArrayList<>(this.inMemoryForecasData);
+        return new ArrayList<>(this.inMemoryForecastData);
     }
 
     @Override
-    public void save(Forecast weather) {
-        this.inMemoryForecasData.add(weather);
+    public void save(Forecast forecast) {
+        this.inMemoryForecastData.add(forecast);
     }
 
     @Override
     public void delete(Integer id) {
         var weatherToDelete = this.findById(id);
-        this.inMemoryForecasData.remove(weatherToDelete.get());
+        this.inMemoryForecastData.remove(weatherToDelete.get());
     }
 
     @Override
     public Forecast update(Forecast source) {
-        // source =  new Weather(1, "Alajuela", "10101", 30.0f)
+        System.out.println("1");
         var current = this.findById(source.getId()).get();
-        // current =  new Weather(1, "Alajuela", "10101", 23.0f)
-
-        current.setCountryName(source.getCountryName());
         current.setCityName(source.getCityName());
         current.setZipCode(source.getZipCode());
         current.setTemperature(source.getTemperature());
@@ -57,12 +55,8 @@ public class InMemoryForecastRepository implements Repository<Forecast, Integer>
         this.save(current);
 
         return current;
-        // source =  new Weather(1, "Alajuela", "10101", 30.0f)
-    }
-
-    @Override
-    public void remove(Forecast forecast) {
-        this.inMemoryForecasData.remove(forecast);
-        
     }
 }
+
+
+//correciones

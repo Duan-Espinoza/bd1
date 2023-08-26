@@ -1,49 +1,273 @@
 package tec.bd.weather.service;
 
 import org.junit.jupiter.api.Test;
-import tec.bd.weather.model.Report;
-import tec.bd.weather.storage.WeatherReportStorage;
+import tec.bd.weather.entity.Forecast;
+import tec.bd.weather.repository.InMemoryForecastRepository;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
+//Duan Antonio Espinoza
+//Tarea 3
+//Arreglos del test
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
-
 public class WeatherServiceImplTest {
 
     @Test
-    public void whenReportByZipCodeAndRemoteCall_ThenGetAndStoreLocally() {
+    public void GivenACity_WhenValidCity_ThenReturnTemperature() {
+        // Arrange
+        var forecastRepository = mock(InMemoryForecastRepository.class);
+        var weatherService = new WeatherServiceImpl(forecastRepository);
+        var forecast = mock(Forecast.class); // new Forecast(..,..,..,..,..)
 
-        var remoteWeatherProvider = mock(WeatherService.class);
-        var weatherReportStorage = mock(WeatherReportStorage.class);
+        // comportamiento
+        given(forecast.getCityName()).willReturn("Alajuela");
+        given(forecast.getTemperature()).willReturn(23.0f);
+        given(forecastRepository.findAll()).willReturn(List.of(forecast));
 
-        given(remoteWeatherProvider.getByZipCode(anyString())).willReturn(mock(Report.class));
+        // Act
+        var actual = weatherService.getCityTemperature("Alajuela");
 
-        var service = new WeatherServiceImpl(remoteWeatherProvider, weatherReportStorage);
+        // Assert, probando lo que esta detras de la llamada
+        verify(forecastRepository, times(1)).findAll();
+        verify(forecast, times(1)).getCityName();
+        verify(forecast, times(1)).getTemperature();
 
-        var actual = service.getByZipCode("90210");
-
-        verify(weatherReportStorage, times(1)).find(anyString());
-        verify(remoteWeatherProvider, times(1)).getByZipCode("90210");
-        verify(weatherReportStorage, times(1)).save(any(Report.class));
-
-        assertThat(actual).isNotNull();
+        assertThat(actual).isEqualTo(23.0f);
     }
+    
+    
+    
+    //Implementaciones pedidas por el profesor
+    //*************************
+    //Si la ciudad no es soportada...
 
     @Test
-    public void whenReportByZipCodeAndDataIsStoredLocally_ThenReturnLocalData() {
+    public void GivenACity_WhenCityIsNotSupported_ThenException() {
+        // Arrange
+        var forecastRepository = mock(InMemoryForecastRepository.class);
+        var weatherService = new WeatherServiceImpl(forecastRepository);
 
-        var remoteWeatherProvider = mock(WeatherService.class);
-        var weatherReportStorage = mock(WeatherReportStorage.class);
+        given(forecastRepository.findAll()).willReturn(Collections.emptyList());
 
-        given(weatherReportStorage.find(anyString())).willReturn(mock(Report.class));
+        // Act
+        try {
+            weatherService.getCityTemperature("Alajuela");
+            fail("We shouldn't reach this line!");
+        } catch (Exception e) {
 
-        var service = new WeatherServiceImpl(remoteWeatherProvider, weatherReportStorage);
+        }
 
-        var actual = service.getByZipCode("90210");
-
-        verify(weatherReportStorage, times(1)).find(anyString());
-        verify(remoteWeatherProvider, never()).getByZipCode("90210");
-        verify(weatherReportStorage, never()).save(any(Report.class));
-
-        assertThat(actual).isNotNull();
+        // Assert
+        verify(forecastRepository, times(1)).findAll();
     }
+    //Si forecast es valido
+    @Test
+    public void GivenAValidForecast_WhenCreateNewForecast_ThenForecastIsCreated() {
+        // Arrange
+        // se crea un imitador de esa clase InMemoryForecastRepository
+        var forecastRepository = mock(InMemoryForecastRepository.class);
+        // cuando se llame al findById y le pase cualquier entero devuelva un empty
+        given(forecastRepository.findById(anyInt())).willReturn(Optional.empty());
+        //var forecastRepository = new InMemoryForecastRepository();
+        var weatherService = new WeatherServiceImpl(forecastRepository);
+        var forecast = new Forecast(5, "Costa Rica", "Limon", "33122", new Date(), 23.0f);
+
+        // Act
+        weatherService.newForecast(forecast);
+
+        // Assert
+        verify(forecastRepository, times(1)).findById(5);
+        verify(forecastRepository, times(1)).save(forecast);
+
+        // var actual = weatherService.getCityTemperature("Limon");
+        //assertThat(actual).isEqualTo(23.0f);
+    }
+    
+    //Si el forecast existe, excepcion
+
+    @Test
+    public void GivenExistingForecast_WhenCreateNewForecast_ThenServiceException() {
+        // Arrange
+        var forecastRepository = mock(InMemoryForecastRepository.class);
+
+        given(forecastRepository.findById(anyInt())).willReturn(Optional.of(new Forecast()));
+
+        var weatherService = new WeatherServiceImpl(forecastRepository);
+        var forecast = new Forecast(5, "Limon", "Costa Rica", "33122", new Date(),  23.0f);
+
+        // Act
+        try {
+            weatherService.newForecast(forecast);
+            fail("We shouldn't reach this line!");
+        } catch (Exception e) {
+
+        }
+
+        // Assert
+        verify(forecastRepository, times(1)).findById(5);
+        verify(forecastRepository, never()).save(forecast);
+    }
+
+    // TODO: Si se llega a ingresar un nuevo Forecast con miembros inválidos,
+    //  el método no debe llamar al repositorio.
+    @Test
+    public void GivenAInvalidForecast_WhenCreateNewForecast_ThenServiceException() {
+        // Arrange
+        var forecastRepository = mock(InMemoryForecastRepository.class);
+
+        given(forecastRepository.findById(anyInt())).willReturn(Optional.of(new Forecast()));
+
+        var weatherService = new WeatherServiceImpl(forecastRepository);
+        var forecast = new Forecast(-1, "Limon", "Costa Rica", "33122", new Date(),  23.0f);
+
+        try {
+            weatherService.newForecast(forecast);
+            fail("We shouldn't reach this line!");
+        } catch (Exception e) {
+
+        }
+        verify(forecastRepository, never()).findById(anyInt());
+        verify(forecastRepository, never()).save(forecast);
+
+
+
+    }
+
+    // TODO: prueba unitaria para probar que una actualización es exitosa
+    //Observaciones del profesor....
+
+    @Test
+    public void GivenValidForecast_WhenUpdatingTemperature_ThenNewTemperature() {
+
+        // Arrange
+        var currentForecast = new Forecast(5, "Limon", "Costa Rica", "33122", new Date(), 23.0f);
+        var forecastToBeUpdated = new Forecast(5, "Limon", "Costa Rica", "33122", new Date(), 19.0f);
+        var forecastRepository = mock(InMemoryForecastRepository.class);
+
+        given(forecastRepository.findById(anyInt())).willReturn(Optional.of(currentForecast));
+        given(forecastRepository.update(forecastToBeUpdated)).willReturn(forecastToBeUpdated);
+        given(forecastRepository.findAll()).willReturn(List.of(currentForecast));
+
+        var weatherService = new WeatherServiceImpl(forecastRepository);
+
+        // Act
+        // 1.
+        var oldForecast = weatherService.getCityTemperature("Limon");
+        // 2.
+        var actual = weatherService.updateForecast(forecastToBeUpdated);
+
+        // Assert
+        verify(forecastRepository, times(1)).findById(5);
+        verify(forecastRepository, times(1)).update(forecastToBeUpdated);
+        verify(forecastRepository, times(1)).findAll();
+
+        assertThat(actual).isNotSameAs(oldForecast);
+
+        assertThat(actual.getId()).isEqualTo(5);
+        assertThat(actual.getZipCode()).isEqualTo("33122");
+        assertThat(actual.getCountryName()).isEqualTo("Costa Rica");
+        assertThat(actual.getCityName()).isEqualTo("Limon");
+        assertThat(actual.getTemperature()).isEqualTo(19.0f);
+    }
+
+    // TODO: .......
+    // TODO: prueba unitaria para probar que un Forecast que NO exista no pueda ser actualizado
+
+    @Test
+    public void GivenNoneExistingForecast_WhenUpdateForecast_ThenServiceException(){
+        var currentForecast = new Forecast(5, "Limon", "Costa Rica", "33122", new Date(), 23.0f);
+
+        var repository = mock(InMemoryForecastRepository.class);
+
+        given(repository.findById(anyInt())).willReturn(Optional.empty());
+
+        var weatherService = new WeatherServiceImpl(repository);
+        //var forecast = new Forecast(5, "Costa Rica", "Limon", "33122", new Date(),  23.0f);
+
+        // Act
+
+        try {
+            weatherService.updateForecast(currentForecast);
+            fail("We shouldn't reach this line!");
+        } catch (Exception e) {
+
+        }
+
+
+        // Assert
+        //verify(repository, never()).findById(5);
+        verify(repository, never()).update(currentForecast);
+
+    }
+
+
+
+    // TODO: prueba unitaria para probar que un Forecast que tiene miembros inválidos, el método no debe llamar al repositorio.
+   // @Test
+    //pendiente
+    //public void
+
+
+
+
+
+    // TODO: prueba unitaria para probar que un Forecast ID que NO exista no pueda ser eliminado
+    @Test
+    public void GivenNoneExistingForecastID_WhenRemoveForecast_ThenServiceException() {
+
+        var repository = mock(InMemoryForecastRepository.class);
+
+        given(repository.findById(anyInt())).willReturn(Optional.empty());
+
+        var weatherService = new WeatherServiceImpl(repository);
+        //var forecast = new Forecast(5, "Costa Rica", "Limon", "33122", new Date(),  23.0f);
+
+        // Act
+
+        try {
+            weatherService.removeForecast(5);
+            fail("We shouldn't reach this line!");
+        } catch (Exception e) {
+
+        }
+
+
+        // Assert
+        verify(repository,times(1)).findById(5);
+
+        verify(repository, never()).delete(anyInt());
+
+    }
+
+
+    // TODO: prueba unitaria para probar la eliminación exitosa de un Forecast
+    @Test
+    public void GivenExistingForecast_WhenRemoveForecast_ThenRemovedSuccessfully() {
+
+        var repository = mock(InMemoryForecastRepository.class);
+
+        given(repository.findById(anyInt())).willReturn(Optional.of(new Forecast()));
+
+        var weatherService = new WeatherServiceImpl(repository);
+        //var forecast = new Forecast(5, "Costa Rica", "Limon", "33122", new Date(),  23.0f);
+
+        // Act
+        weatherService.removeForecast(5);
+
+
+        // Assert
+        verify(repository, times(1)).delete(5);
+
+        verify(repository,times(1)).findById(5);
+        //verify(repository, never()).save(forecast);
+
+
+
+    }
+
 }
