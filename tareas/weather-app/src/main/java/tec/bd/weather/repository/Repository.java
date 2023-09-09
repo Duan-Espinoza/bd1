@@ -19,3 +19,6 @@ public interface Repository<T, ID> {
 
     T update(T source);
 }
+
+
+//Se agregan/modifican funcionalidades

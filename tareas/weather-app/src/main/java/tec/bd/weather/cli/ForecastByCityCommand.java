@@ -22,3 +22,6 @@ public class ForecastByCityCommand implements Runnable {
         }
     }
 }
+
+
+//Se agregan/modifican funcionalidades

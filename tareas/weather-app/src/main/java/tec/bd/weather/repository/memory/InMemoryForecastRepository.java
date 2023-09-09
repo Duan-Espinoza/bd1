@@ -72,3 +72,5 @@ public class InMemoryForecastRepository implements Repository<Forecast, Integer>
         // source =  new Weather(1, "Alajuela", "10101", 30.0f)
     }
 }
+
+//Se agregan/modifican funcionalidades + traslado a paquete memory

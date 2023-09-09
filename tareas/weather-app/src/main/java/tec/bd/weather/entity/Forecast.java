@@ -115,3 +115,5 @@ public class Forecast {
 
 
 }
+
+//Se agregan/modifican funcionalidades

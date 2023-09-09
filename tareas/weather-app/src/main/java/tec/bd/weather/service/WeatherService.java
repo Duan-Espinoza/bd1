@@ -15,3 +15,5 @@ public interface WeatherService {
 
     void removeForecast(int forecastId);
 }
+
+//Se agregan/modifican funcionalidades

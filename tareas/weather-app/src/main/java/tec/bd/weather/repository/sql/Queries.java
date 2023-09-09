@@ -19,3 +19,6 @@ public class Queries {
             "country_name = ?, city_name = ?, zip_code = ?, forecast_date = ?, temperature = ? "
             +"WHERE forecast_id = ?";
 }
+
+
+//Implementaciones sql

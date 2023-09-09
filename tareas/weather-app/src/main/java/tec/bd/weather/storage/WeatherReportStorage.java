@@ -16,3 +16,6 @@ public interface WeatherReportStorage {
 
     List<Report> find();
 }
+
+
+//Se agregan/modifican funcionalidades

@@ -36,3 +36,5 @@ public class CreateForecastCommand implements Runnable {
         }
     }
 }
+
+//Se agregan/modifican funcionalidades

@@ -25,3 +25,6 @@ public class AllForecastsCommand implements Runnable {
         }
     }
 }
+
+
+//Clase nueva agregada para uso de sql

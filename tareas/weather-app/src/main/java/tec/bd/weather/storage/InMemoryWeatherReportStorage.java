@@ -62,3 +62,6 @@ public class InMemoryWeatherReportStorage implements WeatherReportStorage {
         return (dateFormat.format(report.getDate()) + "-" + report.getReportType());
     }
 }
+
+
+//Se agregan/modifican funcionalidades

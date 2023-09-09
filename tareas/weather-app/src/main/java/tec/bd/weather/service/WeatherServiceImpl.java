@@ -81,3 +81,5 @@ public class WeatherServiceImpl implements WeatherService{
         this.weatherRepository.delete(forecastId);
     }
 }
+
+//Se agregan/modifican funcionalidades
