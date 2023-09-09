@@ -1,37 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>tec.bd</groupId>
   <artifactId>weather-app</artifactId>
-  <version>1.0.2</version>
+  <version>1.0.3-SNAPSHOT</version>
 
   <name>weather-app</name>
   <!-- FIXME change it to the project's website -->
   <url>http://www.example.com</url>
 
-
-
   <scm>
-    <developerConnection>scm:git:https://github.com/Duan-Espinoza/tec-bd1.git</developerConnection>
+    <developerConnection>scm:git:https://github.com/Duan-Espinoza/bd1.git</developerConnection>
   </scm>
-
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>14</maven.compiler.source>
     <maven.compiler.target>14</maven.compiler.target>
-
     <picocli.version>4.6.1</picocli.version>
+    <sqlite.version>3.42.0.1</sqlite.version>
   </properties>
 
   <dependencies>
-
     <dependency>
       <groupId>info.picocli</groupId>
       <artifactId>picocli</artifactId>
       <version>${picocli.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xerial</groupId>
+      <artifactId>sqlite-jdbc</artifactId>
+      <version>${sqlite.version}</version>
     </dependency>
 
     <!-- Test dependencies -->
@@ -69,7 +71,11 @@
       <scope>test</scope>
     </dependency>
 
+
+
   </dependencies>
+
+
 
   <build>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
@@ -104,12 +110,14 @@
             </archive>
           </configuration>
         </plugin>
+
         <plugin>
           <artifactId>maven-assembly-plugin</artifactId>
           <version>3.5.0</version>
           <configuration>
             <archive>
               <manifest>
+
                 <mainClass>tec.bd.weather.App</mainClass>
               </manifest>
             </archive>
@@ -127,6 +135,8 @@
             </execution>
           </executions>
         </plugin>
+
+
         <plugin>
           <artifactId>maven-install-plugin</artifactId>
           <version>2.5.2</version>

@@ -1,13 +1,21 @@
-package tec.bd.weather;
+package tec.bd;
 
 import static org.assertj.core.api.Assertions.*;
+
 import org.junit.jupiter.api.Test;
 
-public class AppTest {
-
+/**
+ * Unit test for simple App.
+ */
+public class AppTest 
+{
+    /**
+     * Rigorous Test :-)
+     */
     @Test
     public void shouldAnswerWithTrue()
     {
-        assertThat(true).isTrue();
+
+        assertThat( true ).isTrue();
     }
 }
