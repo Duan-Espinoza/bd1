@@ -1,3 +1,6 @@
+-- BD1
+-- Duan Antonio Espinoza
+-- 2019079490
 -- Crear la base de datos para la tienda de libros en línea con un nombre más descriptivo
 CREATE DATABASE IF NOT EXISTS LibreriaOnline;
 USE LibreriaOnline;
