@@ -80,7 +80,7 @@ public class InMemoryForecastRepository implements Repository<Forecast, Integer>
         current.setCityName(source.getCityName());
         current.setZipCode(source.getZipCode());
         current.setTemperature(source.getTemperature());
-        // borramos el objeto existente y lo reemplazamos por el actualizado
+        // Se borra el objeto existente y se reemplaza por Forecast actualizado
         this.delete(current.getId());
         this.save(current);
 
