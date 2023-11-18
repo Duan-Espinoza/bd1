@@ -3,7 +3,7 @@ package tec.bd.weather.entity;
 // Proyecto 2
 // Duan Antonio Espinoza
 // 201907990
-// Dependencias necesarias
+// Dependencias necesarias log
 
 public class Logs {
 
